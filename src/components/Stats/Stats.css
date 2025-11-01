@@ -1,0 +1,224 @@
+.stats {
+  padding: var(--spacing-xl) 0;
+  background: var(--secondary-black);
+  position: relative;
+  overflow: hidden;
+}
+
+.stats::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    linear-gradient(45deg, transparent 30%, rgba(227, 30, 36, 0.05) 50%, transparent 70%);
+  animation: shimmer 5s infinite;
+}
+
+.stats__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--primary-red), transparent);
+}
+
+.stats__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 3rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* Stat Card */
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 2.5rem;
+  background: var(--gradient-dark);
+  border-radius: var(--border-radius-xl);
+  border: 2px solid rgba(227, 30, 36, 0.1);
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition-medium);
+  animation: fadeInUp 0.8s ease-out both;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--gradient-primary);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform var(--transition-medium);
+}
+
+.stat-card:hover::before {
+  transform: scaleY(1);
+}
+
+.stat-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  border-color: var(--primary-red);
+  box-shadow: var(--shadow-red);
+}
+
+/* Icon */
+.stat-card__icon {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(227, 30, 36, 0.1);
+  border-radius: var(--border-radius-lg);
+  color: var(--primary-red);
+  flex-shrink: 0;
+  position: relative;
+  transition: all var(--transition-medium);
+}
+
+.stat-card:hover .stat-card__icon {
+  background: var(--gradient-primary);
+  color: var(--white);
+  transform: scale(1.1) rotate(5deg);
+}
+
+.stat-card__icon::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  border-radius: var(--border-radius-lg);
+  border: 2px solid var(--primary-red);
+  opacity: 0;
+  animation: iconPulse 2s infinite;
+}
+
+@keyframes iconPulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* Content */
+.stat-card__content {
+  flex: 1;
+}
+
+.stat-card__value {
+  font-family: var(--font-secondary);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+  transition: transform var(--transition-medium);
+}
+
+.stat-card:hover .stat-card__value {
+  transform: scale(1.1);
+}
+
+.stat-card__label {
+  font-size: 1.1rem;
+  color: var(--gray-light);
+  font-weight: 500;
+  transition: color var(--transition-fast);
+}
+
+.stat-card:hover .stat-card__label {
+  color: var(--white);
+}
+
+/* Glow Effect */
+.stat-card__glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(227, 30, 36, 0.4) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity var(--transition-slow);
+  pointer-events: none;
+}
+
+.stat-card:hover .stat-card__glow {
+  opacity: 1;
+}
+
+/* Animações */
+.stat-card:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.stat-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.stat-card:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+/* Responsividade */
+@media (max-width: 1024px) {
+  .stats__grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+  }
+}
+
+@media (max-width: 968px) {
+  .stats__grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .stat-card {
+    padding: 2rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .stat-card {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+    padding: 1.5rem;
+  }
+
+  .stat-card__icon {
+    width: 70px;
+    height: 70px;
+  }
+
+  .stat-card__value {
+    font-size: 2.5rem;
+  }
+
+  .stat-card__label {
+    font-size: 1rem;
+  }
+}
