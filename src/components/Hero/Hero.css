@@ -255,14 +255,6 @@
   animation: float 3s ease-in-out infinite;
 }
 
-@media (max-width: 1024px) {
-  .hero__scroll-indicator {
-    left: calc(50% + 150px);
-  }
-}
-
-@media (max-width: 768px) {
-
 .hero__scroll-mouse {
   width: 28px;
   height: 45px;
@@ -304,6 +296,12 @@
 }
 
 /* Responsividade */
+@media (max-width: 1024px) {
+  .hero__scroll-indicator {
+    left: calc(50% + 150px);
+  }
+}
+
 @media (max-width: 768px) {
   .hero {
     min-height: calc(100vh - 80px);
