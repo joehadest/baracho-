@@ -115,7 +115,7 @@
 .about__values {
   margin-top: var(--spacing-lg);
   padding: 3rem;
-  background: var(--secondary-black);
+  background: var(--gradient-dark);
   border-radius: var(--border-radius-xl);
   border: 2px solid rgba(227, 30, 36, 0.1);
   position: relative;

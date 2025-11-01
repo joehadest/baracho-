@@ -1,6 +1,6 @@
 .stats {
   padding: var(--spacing-xl) 0;
-  background: var(--secondary-black);
+  background: var(--primary-black);
   position: relative;
   overflow: hidden;
 }
