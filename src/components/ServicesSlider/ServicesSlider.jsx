@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import './ServicesSlider.css'
 
 const ServicesSlider = () => {
@@ -271,7 +272,7 @@ const ServicesSlider = () => {
       </div>
 
       {/* Modal para visualização de imagem em tamanho completo */}
-      {isModalOpen && selectedImage && (
+      {isModalOpen && selectedImage && createPortal(
         <div 
           className="services-slider__modal"
           onClick={closeModal}
@@ -322,7 +323,8 @@ const ServicesSlider = () => {
               <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </button>
-        </div>
+        </div>,
+        document.body
       )}
     </section>
   )

@@ -1,7 +1,6 @@
 .projects {
   background: var(--primary-black);
   position: relative;
-  overflow: hidden;
 }
 
 .projects::after {
@@ -298,6 +297,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 2rem;
+  overflow: auto;
   animation: modalFadeIn 0.3s ease-out;
 }
 
@@ -313,7 +314,10 @@
 .projects__modal-content {
   position: relative;
   max-width: 90vw;
-  max-height: 90vh;
+  max-height: 85vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   animation: modalZoomIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -330,9 +334,10 @@
 
 .projects__modal-image {
   max-width: 100%;
-  max-height: 75vh;
+  max-height: 85vh;
   width: auto;
   height: auto;
+  object-fit: contain;
   border-radius: var(--border-radius-lg);
   box-shadow: 0 20px 60px rgba(227, 30, 36, 0.3);
   border: 2px solid rgba(227, 30, 36, 0.2);
@@ -476,6 +481,10 @@
 }
 
 @media (max-width: 768px) {
+  .projects__modal {
+    padding: 1rem;
+  }
+
   .projects__modal-close {
     width: 45px;
     height: 45px;
@@ -519,6 +528,10 @@
 }
 
 @media (max-width: 480px) {
+  .projects__modal {
+    padding: 0.5rem;
+  }
+
   .projects__modal-close {
     width: 40px;
     height: 40px;
@@ -544,5 +557,40 @@
 
   .projects__modal-description {
     font-size: 0.9rem;
+  }
+}
+
+/* Telas grandes (2K, 4K e ultrawide) */
+@media (min-width: 1920px) {
+  .projects__modal-content {
+    max-width: 80vw;
+    max-height: 80vh;
+  }
+
+  .projects__modal-image {
+    max-height: 75vh;
+  }
+
+  .projects__modal-info {
+    padding: 2.5rem 3rem;
+  }
+
+  .projects__modal-title {
+    font-size: 2rem;
+  }
+
+  .projects__modal-description {
+    font-size: 1.1rem;
+  }
+}
+
+@media (min-width: 2560px) {
+  .projects__modal-content {
+    max-width: 70vw;
+    max-height: 75vh;
+  }
+
+  .projects__modal-image {
+    max-height: 70vh;
   }
 }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import './Projects.css'
 
 const Projects = () => {
@@ -176,7 +177,7 @@ const Projects = () => {
       </div>
 
       {/* Modal para visualização do projeto em tamanho completo */}
-      {isModalOpen && selectedProject && (
+      {isModalOpen && selectedProject && createPortal(
         <div 
           className="projects__modal"
           onClick={closeModal}
@@ -228,7 +229,8 @@ const Projects = () => {
               <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </button>
-        </div>
+        </div>,
+        document.body
       )}
     </section>
   )
