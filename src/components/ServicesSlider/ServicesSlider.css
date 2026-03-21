@@ -403,6 +403,15 @@
   line-height: 1.3;
 }
 
+.services-slider__modal-description {
+  margin-top: 0.75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.88);
+  line-height: 1.5;
+  max-width: 42rem;
+}
+
 /* Modal Close Button */
 .services-slider__modal-close {
   position: fixed;

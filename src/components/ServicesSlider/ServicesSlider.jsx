@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
+import { barachoProjects } from '../../data/barachoProjects'
 import './ServicesSlider.css'
+
+const featuredProjects = barachoProjects
 
 const ServicesSlider = () => {
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -9,68 +12,6 @@ const ServicesSlider = () => {
   const [selectedImage, setSelectedImage] = useState(null)
   const [isVisible, setIsVisible] = useState(false)
 
-  // Imagens dos serviços organizadas por categoria
-  const servicesImages = [
-    // Alpinismo Industrial
-    {
-      image: '/images/services/alphinismo industrial/alpinismo industrial.png',
-      title: 'Alpinismo Industrial',
-      category: 'Alpinismo'
-    },
-    {
-      image: '/images/services/alphinismo industrial/alpinismo tratamento anticorrosivo e pintura com alpinismo .png',
-      title: 'Tratamento Anticorrosivo com Alpinismo',
-      category: 'Alpinismo'
-    },
-    {
-      image: '/images/services/alphinismo industrial/Limpeza de tanques alpinismo.png',
-      title: 'Limpeza de Tanques',
-      category: 'Alpinismo'
-    },
-    // Isolamento Térmico
-    {
-      image: '/images/services/isolamento termico/isolamento térmico .png',
-      title: 'Isolamento Térmico',
-      category: 'Isolamento Térmico'
-    },
-    {
-      image: '/images/services/isolamento termico/isolamento termico em equipamento e tubulações.png',
-      title: 'Isolamento em Equipamentos e Tubulações',
-      category: 'Isolamento Térmico'
-    },
-    {
-      image: '/images/services/isolamento termico/isolamento termico duto de ventilação .png',
-      title: 'Isolamento em Dutos de Ventilação',
-      category: 'Isolamento Térmico'
-    },
-    {
-      image: '/images/services/isolamento termico/isolamento termico em vaso de pressao .png',
-      title: 'Isolamento em Vasos de Pressão',
-      category: 'Isolamento Térmico'
-    },
-    {
-      image: '/images/services/isolamento termico/isolamento termico linha de vapor santana textiles.png',
-      title: 'Isolamento em Linha de Vapor',
-      category: 'Isolamento Térmico'
-    },
-    {
-      image: '/images/services/isolamento termico/isolamento termico tanque de maracanã em andamento .png',
-      title: 'Isolamento em Tanques',
-      category: 'Isolamento Térmico'
-    },
-    {
-      image: '/images/services/isolamento termico/isolamento termico linha de vapor.png',
-      title: 'Isolamento de Linha de Vapor',
-      category: 'Isolamento Térmico'
-    },
-    {
-      image: '/images/services/isolamento termico/Isolamento Térmico da turbina.png',
-      title: 'Isolamento Térmico de Turbina',
-      category: 'Isolamento Térmico'
-    }
-  ]
-
-  // Animação de entrada ao scroll
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -93,20 +34,18 @@ const ServicesSlider = () => {
     }
   }, [])
 
-  // Auto-play do slider
   useEffect(() => {
     if (!isAutoPlaying || isModalOpen) return
 
     const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => 
-        prevIndex === servicesImages.length - 1 ? 0 : prevIndex + 1
+      setCurrentIndex((prevIndex) =>
+        prevIndex === featuredProjects.length - 1 ? 0 : prevIndex + 1
       )
-    }, 4000) // Muda a cada 4 segundos
+    }, 4000)
 
     return () => clearInterval(interval)
-  }, [isAutoPlaying, isModalOpen, servicesImages.length])
+  }, [isAutoPlaying, isModalOpen])
 
-    // Controle de teclado para o modal
   useEffect(() => {
     if (!isModalOpen) return
 
@@ -124,7 +63,6 @@ const ServicesSlider = () => {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [isModalOpen, selectedImage])
 
-  // Prevenir scroll do body quando o modal estiver aberto
   useEffect(() => {
     if (isModalOpen) {
       document.body.style.overflow = 'hidden'
@@ -136,8 +74,8 @@ const ServicesSlider = () => {
     }
   }, [isModalOpen])
 
-  const openModal = (service) => {
-    setSelectedImage(service)
+  const openModal = (project) => {
+    setSelectedImage(project)
     setIsModalOpen(true)
     setIsAutoPlaying(false)
   }
@@ -151,59 +89,60 @@ const ServicesSlider = () => {
   const goToSlide = (index) => {
     setCurrentIndex(index)
     setIsAutoPlaying(false)
-    setTimeout(() => setIsAutoPlaying(true), 10000) // Retoma auto-play após 10s
+    setTimeout(() => setIsAutoPlaying(true), 10000)
   }
 
   const nextSlide = () => {
-    setCurrentIndex((prevIndex) => 
-      prevIndex === servicesImages.length - 1 ? 0 : prevIndex + 1
+    setCurrentIndex((prevIndex) =>
+      prevIndex === featuredProjects.length - 1 ? 0 : prevIndex + 1
     )
     setIsAutoPlaying(false)
     setTimeout(() => setIsAutoPlaying(true), 10000)
   }
 
   const prevSlide = () => {
-    setCurrentIndex((prevIndex) => 
-      prevIndex === 0 ? servicesImages.length - 1 : prevIndex - 1
+    setCurrentIndex((prevIndex) =>
+      prevIndex === 0 ? featuredProjects.length - 1 : prevIndex - 1
     )
     setIsAutoPlaying(false)
     setTimeout(() => setIsAutoPlaying(true), 10000)
   }
 
   const nextImage = () => {
-    const currentIdx = servicesImages.findIndex(img => img.image === selectedImage.image)
-    const nextIdx = (currentIdx + 1) % servicesImages.length
-    setSelectedImage(servicesImages[nextIdx])
+    const currentIdx = featuredProjects.findIndex((p) => p.image === selectedImage.image)
+    const nextIdx = (currentIdx + 1) % featuredProjects.length
+    setSelectedImage(featuredProjects[nextIdx])
   }
 
   const prevImage = () => {
-    const currentIdx = servicesImages.findIndex(img => img.image === selectedImage.image)
-    const prevIdx = currentIdx === 0 ? servicesImages.length - 1 : currentIdx - 1
-    setSelectedImage(servicesImages[prevIdx])
+    const currentIdx = featuredProjects.findIndex((p) => p.image === selectedImage.image)
+    const prevIdx = currentIdx === 0 ? featuredProjects.length - 1 : currentIdx - 1
+    setSelectedImage(featuredProjects[prevIdx])
   }
 
-  // Calcular slides visíveis (3 por vez em desktop)
   const getVisibleSlides = () => {
     const slides = []
     for (let i = 0; i < 3; i++) {
-      const index = (currentIndex + i) % servicesImages.length
-      slides.push({ ...servicesImages[index], slideIndex: i })
+      const index = (currentIndex + i) % featuredProjects.length
+      slides.push({ ...featuredProjects[index], slideIndex: i })
     }
     return slides
   }
+
+  const categoryDisplay = (project) => project.categoryLabel || project.category
 
   return (
     <section className={`services-slider ${isVisible ? 'services-slider--visible' : ''}`}>
       <div className="container">
         <div className="services-slider__header">
-          <h2 className="services-slider__title">Nossos Serviços em Destaque</h2>
+          <h2 className="services-slider__title">Nossos Projetos em Destaque</h2>
           <p className="services-slider__subtitle">
-            Confira alguns dos nossos trabalhos realizados
+            Seleção dos nossos trabalhos recentes — confira a galeria completa na seção Projetos
           </p>
         </div>
 
         <div className="services-slider__container">
-          <button 
+          <button
             className="services-slider__nav services-slider__nav--prev"
             onClick={prevSlide}
             aria-label="Anterior"
@@ -214,27 +153,27 @@ const ServicesSlider = () => {
           </button>
 
           <div className="services-slider__track">
-            {getVisibleSlides().map((service, index) => (
-              <div 
-                key={index}
+            {getVisibleSlides().map((project) => (
+              <div
+                key={`${project.image}-${project.slideIndex}`}
                 className="services-slider__slide"
-                style={{ animationDelay: `${service.slideIndex * 0.1}s` }}
+                style={{ animationDelay: `${project.slideIndex * 0.1}s` }}
               >
-                <div 
+                <div
                   className="services-slider__image-wrapper"
-                  onClick={() => openModal(service)}
+                  onClick={() => openModal(project)}
                   role="button"
                   tabIndex={0}
-                  onKeyPress={(e) => e.key === 'Enter' && openModal(service)}
+                  onKeyPress={(e) => e.key === 'Enter' && openModal(project)}
                 >
-                  <img 
-                    src={service.image} 
-                    alt={service.title}
+                  <img
+                    src={project.image}
+                    alt={project.title}
                     className="services-slider__image"
                   />
                   <div className="services-slider__overlay">
-                    <span className="services-slider__category">{service.category}</span>
-                    <h3 className="services-slider__slide-title">{service.title}</h3>
+                    <span className="services-slider__category">{categoryDisplay(project)}</span>
+                    <h3 className="services-slider__slide-title">{project.title}</h3>
                     <div className="services-slider__zoom-icon">
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                         <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2"/>
@@ -248,7 +187,7 @@ const ServicesSlider = () => {
             ))}
           </div>
 
-          <button 
+          <button
             className="services-slider__nav services-slider__nav--next"
             onClick={nextSlide}
             aria-label="Próximo"
@@ -260,9 +199,10 @@ const ServicesSlider = () => {
         </div>
 
         <div className="services-slider__dots">
-          {servicesImages.map((_, index) => (
+          {featuredProjects.map((_, index) => (
             <button
               key={index}
+              type="button"
               className={`services-slider__dot ${index === currentIndex ? 'services-slider__dot--active' : ''}`}
               onClick={() => goToSlide(index)}
               aria-label={`Ir para slide ${index + 1}`}
@@ -271,15 +211,14 @@ const ServicesSlider = () => {
         </div>
       </div>
 
-      {/* Modal para visualização de imagem em tamanho completo */}
       {isModalOpen && selectedImage && createPortal(
-        <div 
+        <div
           className="services-slider__modal"
           onClick={closeModal}
           role="dialog"
           aria-modal="true"
         >
-          <button 
+          <button
             className="services-slider__modal-close"
             onClick={closeModal}
             aria-label="Fechar modal"
@@ -289,7 +228,7 @@ const ServicesSlider = () => {
             </svg>
           </button>
 
-          <button 
+          <button
             className="services-slider__modal-nav services-slider__modal-nav--prev"
             onClick={(e) => { e.stopPropagation(); prevImage(); }}
             aria-label="Imagem anterior"
@@ -299,22 +238,25 @@ const ServicesSlider = () => {
             </svg>
           </button>
 
-          <div 
+          <div
             className="services-slider__modal-content"
             onClick={(e) => e.stopPropagation()}
           >
-            <img 
-              src={selectedImage.image} 
+            <img
+              src={selectedImage.image}
               alt={selectedImage.title}
               className="services-slider__modal-image"
             />
             <div className="services-slider__modal-info">
-              <span className="services-slider__modal-category">{selectedImage.category}</span>
+              <span className="services-slider__modal-category">{categoryDisplay(selectedImage)}</span>
               <h3 className="services-slider__modal-title">{selectedImage.title}</h3>
+              {selectedImage.description && (
+                <p className="services-slider__modal-description">{selectedImage.description}</p>
+              )}
             </div>
           </div>
 
-          <button 
+          <button
             className="services-slider__modal-nav services-slider__modal-nav--next"
             onClick={(e) => { e.stopPropagation(); nextImage(); }}
             aria-label="Próxima imagem"
