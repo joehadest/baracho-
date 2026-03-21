@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import './Projects.css'
 
+const BARACHO_PROJECTS_IMG = '/images/projects/baracho%20projects%20img'
+
 const Projects = () => {
   const [activeFilter, setActiveFilter] = useState('all')
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -11,53 +13,191 @@ const Projects = () => {
     {
       title: 'Alpinismo Industrial 1',
       category: 'alpinismo',
+      categoryLabel: 'Alpinismo',
       description: 'Trabalho de alpinismo industrial com segurança e precisão.',
       image: '/images/projects/alphinismo/alphinismo 1.jpg'
     },
     {
       title: 'Alpinismo Industrial 2',
       category: 'alpinismo',
+      categoryLabel: 'Alpinismo',
       description: 'Instalação e manutenção em altura com técnicas especializadas.',
       image: '/images/projects/alphinismo/alphinismo 2.jpg'
     },
     {
       title: 'Pintura Industrial 1',
-      category: 'pintura',
+      category: 'pintura-industrial',
+      categoryLabel: 'Pintura Industrial',
       description: 'Acabamento de pintura em estruturas industriais.',
       image: '/images/projects/pintura industrial/pintura industrial 1.jpg'
     },
     {
       title: 'Pintura Industrial 2',
-      category: 'pintura',
+      category: 'pintura-industrial',
+      categoryLabel: 'Pintura Industrial',
       description: 'Pintura especializada em equipamentos industriais.',
       image: '/images/projects/pintura industrial/pintura industrial 2.jpg'
     },
     {
       title: 'Serviço de Solda e Caldeira 1',
       category: 'solda',
+      categoryLabel: 'Solda e caldeira',
       description: 'Serviços especializados em solda de alta qualidade.',
       image: '/images/projects/solda e caldeira/serviço de solda e caldeira.jpg'
     },
     {
       title: 'Serviço de Solda e Caldeira 2',
       category: 'solda',
+      categoryLabel: 'Solda e caldeira',
       description: 'Manutenção e reparo de caldeiras industriais.',
       image: '/images/projects/solda e caldeira/serviço de solda e caldeira 2.jpg'
+    },
+    {
+      title: 'Offshore - Navios e Plataformas',
+      category: 'isolamento-termico',
+      categoryLabel: 'Isolamento Térmico',
+      description: 'Isolamento térmico para aplicações offshore em navios e plataformas.',
+      image: `${BARACHO_PROJECTS_IMG}/img16.jpg`
+    },
+    {
+      title: 'Isolamento Frio',
+      category: 'isolamento-termico',
+      categoryLabel: 'Isolamento Térmico',
+      description: 'Sistemas de isolamento para linhas e equipamentos de refrigeração.',
+      image: `${BARACHO_PROJECTS_IMG}/img19.jpg`
+    },
+    {
+      title: 'Trocador de Calor',
+      category: 'isolamento-termico',
+      categoryLabel: 'Isolamento Térmico',
+      description: 'Isolamento térmico em trocadores de calor.',
+      image: `${BARACHO_PROJECTS_IMG}/img22.jpg`
+    },
+    {
+      title: 'Tanque Maracanã',
+      category: 'isolamento-termico',
+      categoryLabel: 'Isolamento Térmico',
+      description: 'Isolamento térmico em tanques industriais.',
+      image: `${BARACHO_PROJECTS_IMG}/img25.jpg`
+    },
+    {
+      title: 'Vaso de Pressão',
+      category: 'isolamento-termico',
+      categoryLabel: 'Isolamento Térmico',
+      description: 'Isolamento térmico em vasos de pressão.',
+      image: `${BARACHO_PROJECTS_IMG}/img28.jpg`
+    },
+    {
+      title: 'Jaqueta Térmica',
+      category: 'isolamento-termico',
+      categoryLabel: 'Isolamento Térmico',
+      description: 'Fabricação e aplicação de jaquetas térmicas.',
+      image: `${BARACHO_PROJECTS_IMG}/img31.jpg`
+    },
+    {
+      title: 'Fornos e Caldeiras',
+      category: 'isolamento-termico',
+      categoryLabel: 'Isolamento Térmico',
+      description: 'Isolamento térmico em fornos e caldeiras industriais.',
+      image: `${BARACHO_PROJECTS_IMG}/img34.jpg`
+    },
+    {
+      title: 'Forno, Caldeira e Chaminé',
+      category: 'refratario',
+      categoryLabel: 'Refratário',
+      description: 'Soluções refratárias em fornos, caldeiras e chaminés.',
+      image: `${BARACHO_PROJECTS_IMG}/img37.jpg`
+    },
+    {
+      title: 'Jateamento Abrasivo',
+      category: 'pintura-industrial',
+      categoryLabel: 'Pintura Industrial',
+      description: 'Preparação de superfície por jateamento abrasivo.',
+      image: `${BARACHO_PROJECTS_IMG}/img40.jpg`
+    },
+    {
+      title: 'Pulverização',
+      category: 'pintura-industrial',
+      categoryLabel: 'Pintura Industrial',
+      description: 'Pintura industrial por pulverização.',
+      image: `${BARACHO_PROJECTS_IMG}/img43.jpg`
+    },
+    {
+      title: 'Fabricação e Montagem',
+      category: 'estrutura-metalica',
+      categoryLabel: 'Estrutura Metálica',
+      description: 'Fabricação e montagem de estruturas metálicas.',
+      image: `${BARACHO_PROJECTS_IMG}/img46.jpg`
+    },
+    {
+      title: 'Medição de Espessura',
+      category: 'alpinismo',
+      categoryLabel: 'Alpinismo',
+      description: 'Medição de espessura em altura com técnicas de alpinismo industrial.',
+      image: `${BARACHO_PROJECTS_IMG}/img49.jpg`
+    },
+    {
+      title: 'Isolamento Térmico',
+      category: 'alpinismo',
+      categoryLabel: 'Alpinismo',
+      description: 'Isolamento térmico em trabalhos com acesso por cordas.',
+      image: `${BARACHO_PROJECTS_IMG}/img52.jpg`
+    },
+    {
+      title: 'Limpeza Industrial',
+      category: 'alpinismo',
+      categoryLabel: 'Alpinismo',
+      description: 'Limpeza industrial em altura.',
+      image: `${BARACHO_PROJECTS_IMG}/img55.jpg`
+    },
+    {
+      title: 'Equipamentos e Estruturas',
+      category: 'montagem-andaime',
+      categoryLabel: 'Montagem de Andaime',
+      description: 'Montagem de andaimes para equipamentos e estruturas.',
+      image: `${BARACHO_PROJECTS_IMG}/img58.jpg`
+    },
+    {
+      title: 'Revestimento Epóxi e Impermeabilização',
+      category: 'laminacao-piso',
+      categoryLabel: 'Laminação de Piso',
+      description: 'Laminação com revestimento epóxi e impermeabilização.',
+      image: `${BARACHO_PROJECTS_IMG}/img61.jpg`
+    },
+    {
+      title: 'Predial e Industrial',
+      category: 'construcao-civil',
+      categoryLabel: 'Construção Civil',
+      description: 'Obras prediais e industriais.',
+      image: `${BARACHO_PROJECTS_IMG}/img64.jpg`
+    },
+    {
+      title: 'Fundações e Estruturas',
+      category: 'concretagem-civil',
+      categoryLabel: 'Concretagem Civil',
+      description: 'Concretagem para fundações e estruturas.',
+      image: `${BARACHO_PROJECTS_IMG}/img69.jpg`
     }
   ]
 
   const filters = [
     { id: 'all', label: 'Todos' },
+    { id: 'isolamento-termico', label: 'Isolamento Térmico' },
+    { id: 'refratario', label: 'Refratário' },
+    { id: 'pintura-industrial', label: 'Pintura Industrial' },
+    { id: 'estrutura-metalica', label: 'Estrutura Metálica' },
     { id: 'alpinismo', label: 'Alpinismo' },
-    { id: 'pintura', label: 'Pintura' },
-    { id: 'solda', label: 'Solda' }
+    { id: 'montagem-andaime', label: 'Montagem de Andaime' },
+    { id: 'laminacao-piso', label: 'Laminação de Piso' },
+    { id: 'construcao-civil', label: 'Construção Civil' },
+    { id: 'concretagem-civil', label: 'Concretagem Civil' },
+    { id: 'solda', label: 'Solda e caldeira' }
   ]
 
-  const filteredProjects = activeFilter === 'all' 
-    ? projects 
+  const filteredProjects = activeFilter === 'all'
+    ? projects
     : projects.filter(project => project.category === activeFilter)
 
-  // Funções do modal
   const openModal = (project) => {
     setSelectedProject(project)
     setIsModalOpen(true)
@@ -80,7 +220,6 @@ const Projects = () => {
     setSelectedProject(filteredProjects[prevIdx])
   }
 
-  // Controle de teclado
   useEffect(() => {
     if (!isModalOpen) return
 
@@ -98,7 +237,6 @@ const Projects = () => {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [isModalOpen, selectedProject, filteredProjects])
 
-  // Prevenir scroll do body quando modal aberto
   useEffect(() => {
     if (isModalOpen) {
       document.body.style.overflow = 'hidden'
@@ -109,6 +247,8 @@ const Projects = () => {
       document.body.style.overflow = 'unset'
     }
   }, [isModalOpen])
+
+  const categoryDisplay = (project) => project.categoryLabel || project.category
 
   return (
     <section id="projects" className="projects section">
@@ -132,21 +272,21 @@ const Projects = () => {
 
         <div className="projects__grid">
           {filteredProjects.map((project, index) => (
-            <div 
-              key={index} 
+            <div
+              key={project.image}
               className="project-card"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <div 
+              <div
                 className="project-card__image"
                 onClick={() => openModal(project)}
                 role="button"
                 tabIndex={0}
                 onKeyPress={(e) => e.key === 'Enter' && openModal(project)}
               >
-                <img 
-                  src={project.image} 
-                  alt={project.title} 
+                <img
+                  src={project.image}
+                  alt={project.title}
                   className="project-card__photo"
                 />
                 <div className="project-card__overlay">
@@ -167,7 +307,7 @@ const Projects = () => {
                 </div>
               </div>
               <div className="project-card__content">
-                <span className="project-card__category">{project.category}</span>
+                <span className="project-card__category">{categoryDisplay(project)}</span>
                 <h3 className="project-card__title">{project.title}</h3>
                 <p className="project-card__description">{project.description}</p>
               </div>
@@ -176,15 +316,14 @@ const Projects = () => {
         </div>
       </div>
 
-      {/* Modal para visualização do projeto em tamanho completo */}
       {isModalOpen && selectedProject && createPortal(
-        <div 
+        <div
           className="projects__modal"
           onClick={closeModal}
           role="dialog"
           aria-modal="true"
         >
-          <button 
+          <button
             className="projects__modal-close"
             onClick={closeModal}
             aria-label="Fechar modal"
@@ -194,7 +333,7 @@ const Projects = () => {
             </svg>
           </button>
 
-          <button 
+          <button
             className="projects__modal-nav projects__modal-nav--prev"
             onClick={(e) => { e.stopPropagation(); prevProject(); }}
             aria-label="Projeto anterior"
@@ -204,23 +343,23 @@ const Projects = () => {
             </svg>
           </button>
 
-          <div 
+          <div
             className="projects__modal-content"
             onClick={(e) => e.stopPropagation()}
           >
-            <img 
-              src={selectedProject.image} 
+            <img
+              src={selectedProject.image}
               alt={selectedProject.title}
               className="projects__modal-image"
             />
             <div className="projects__modal-info">
-              <span className="projects__modal-category">{selectedProject.category}</span>
+              <span className="projects__modal-category">{categoryDisplay(selectedProject)}</span>
               <h3 className="projects__modal-title">{selectedProject.title}</h3>
               <p className="projects__modal-description">{selectedProject.description}</p>
             </div>
           </div>
 
-          <button 
+          <button
             className="projects__modal-nav projects__modal-nav--next"
             onClick={(e) => { e.stopPropagation(); nextProject(); }}
             aria-label="Próximo projeto"
