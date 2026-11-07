@@ -1,250 +1,135 @@
-import React, { useState, useEffect } from 'react'
-import { createPortal } from 'react-dom'
-import { barachoProjects } from '../../data/barachoProjects'
-import './Projects.css'
+import { useMemo, useRef, useState } from 'react'
+import { flushSync } from 'react-dom'
+import { gsap, MQ, ScrollTrigger, useGSAP, viewTransition } from '../../lib/motion'
+import { allProjects, categoryLabel, projectFilters } from '../../data/projects'
+import SectionHeading from '../ui/SectionHeading'
+import Lightbox from '../ui/Lightbox'
 
 const Projects = () => {
   const [activeFilter, setActiveFilter] = useState('all')
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [selectedProject, setSelectedProject] = useState(null)
+  const [selected, setSelected] = useState(null)
+  const root = useRef(null)
 
-  const projects = [
-    {
-      title: 'Alpinismo Industrial 1',
-      category: 'alpinismo',
-      categoryLabel: 'Alpinismo',
-      description: 'Trabalho de alpinismo industrial com segurança e precisão.',
-      image: '/images/projects/alphinismo/alphinismo 1.jpg'
+  const counts = useMemo(() => {
+    const map = { all: allProjects.length }
+    allProjects.forEach((p) => (map[p.category] = (map[p.category] || 0) + 1))
+    return map
+  }, [])
+
+  const filters = projectFilters.filter((f) => counts[f.id])
+
+  const filtered = useMemo(
+    () => (activeFilter === 'all' ? allProjects : allProjects.filter((p) => p.category === activeFilter)),
+    [activeFilter]
+  )
+
+  // Cards entram em lotes conforme aparecem na tela
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia()
+      mm.add(MQ.motion, () => {
+        gsap.set('[data-project]', { autoAlpha: 0, y: 70 })
+        const triggers = ScrollTrigger.batch('[data-project]', {
+          start: 'top 92%',
+          once: true,
+          onEnter: (batch) => gsap.to(batch, { autoAlpha: 1, y: 0, duration: 1.2, stagger: 0.08, overwrite: true }),
+        })
+        return () => triggers.forEach((t) => t.kill())
+      })
     },
-    {
-      title: 'Alpinismo Industrial 2',
-      category: 'alpinismo',
-      categoryLabel: 'Alpinismo',
-      description: 'Instalação e manutenção em altura com técnicas especializadas.',
-      image: '/images/projects/alphinismo/alphinismo 2.jpg'
-    },
-    {
-      title: 'Pintura Industrial 1',
-      category: 'pintura-industrial',
-      categoryLabel: 'Pintura Industrial',
-      description: 'Acabamento de pintura em estruturas industriais.',
-      image: '/images/projects/pintura industrial/pintura industrial 1.jpg'
-    },
-    {
-      title: 'Pintura Industrial 2',
-      category: 'pintura-industrial',
-      categoryLabel: 'Pintura Industrial',
-      description: 'Pintura especializada em equipamentos industriais.',
-      image: '/images/projects/pintura industrial/pintura industrial 2.jpg'
-    },
-    {
-      title: 'Serviço de Solda e Caldeira 1',
-      category: 'solda',
-      categoryLabel: 'Solda e caldeira',
-      description: 'Serviços especializados em solda de alta qualidade.',
-      image: '/images/projects/solda e caldeira/serviço de solda e caldeira.jpg'
-    },
-    {
-      title: 'Serviço de Solda e Caldeira 2',
-      category: 'solda',
-      categoryLabel: 'Solda e caldeira',
-      description: 'Manutenção e reparo de caldeiras industriais.',
-      image: '/images/projects/solda e caldeira/serviço de solda e caldeira 2.jpg'
-    },
-    ...barachoProjects
-  ]
+    { scope: root }
+  )
 
-  const filters = [
-    { id: 'all', label: 'Todos' },
-    { id: 'isolamento-termico', label: 'Isolamento Térmico' },
-    { id: 'refratario', label: 'Refratário' },
-    { id: 'pintura-industrial', label: 'Pintura Industrial' },
-    { id: 'estrutura-metalica', label: 'Estrutura Metálica' },
-    { id: 'alpinismo', label: 'Alpinismo' },
-    { id: 'montagem-andaime', label: 'Montagem de Andaime' },
-    { id: 'laminacao-piso', label: 'Laminação de Piso' },
-    { id: 'construcao-civil', label: 'Construção Civil' },
-    { id: 'concretagem-civil', label: 'Concretagem Civil' },
-    { id: 'solda', label: 'Solda e caldeira' }
-  ]
-
-  const filteredProjects = activeFilter === 'all'
-    ? projects
-    : projects.filter(project => project.category === activeFilter)
-
-  const openModal = (project) => {
-    setSelectedProject(project)
-    setIsModalOpen(true)
-  }
-
-  const closeModal = () => {
-    setIsModalOpen(false)
-    setTimeout(() => setSelectedProject(null), 300)
-  }
-
-  const nextProject = () => {
-    const currentIdx = filteredProjects.findIndex(p => p.image === selectedProject.image)
-    const nextIdx = (currentIdx + 1) % filteredProjects.length
-    setSelectedProject(filteredProjects[nextIdx])
-  }
-
-  const prevProject = () => {
-    const currentIdx = filteredProjects.findIndex(p => p.image === selectedProject.image)
-    const prevIdx = currentIdx === 0 ? filteredProjects.length - 1 : currentIdx - 1
-    setSelectedProject(filteredProjects[prevIdx])
-  }
-
-  useEffect(() => {
-    if (!isModalOpen) return
-
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') {
-        closeModal()
-      } else if (e.key === 'ArrowLeft') {
-        prevProject()
-      } else if (e.key === 'ArrowRight') {
-        nextProject()
-      }
+  // Filtro com View Transitions: cada card "desliza" para sua nova posição
+  const changeFilter = (id) => {
+    if (id === activeFilter) return
+    const update = () => {
+      flushSync(() => setActiveFilter(id))
+      gsap.set('[data-project]', { autoAlpha: 1, y: 0 })
     }
+    const vt = viewTransition(update)
+    if (vt) vt.finished.then(() => ScrollTrigger.refresh())
+    else ScrollTrigger.refresh()
+  }
 
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [isModalOpen, selectedProject, filteredProjects])
-
-  useEffect(() => {
-    if (isModalOpen) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = 'unset'
-    }
-    return () => {
-      document.body.style.overflow = 'unset'
-    }
-  }, [isModalOpen])
-
-  const categoryDisplay = (project) => project.categoryLabel || project.category
+  const open = (index, e) => {
+    const img = e.currentTarget.querySelector('img')
+    img.style.viewTransitionName = 'lightbox-img'
+    viewTransition(() => {
+      img.style.viewTransitionName = ''
+      flushSync(() => setSelected(index))
+    })
+  }
 
   return (
-    <section id="projects" className="projects section">
-      <div className="container">
-        <h2 className="section-title">Nossos Projetos</h2>
-        <p className="section-subtitle">
-          Alguns dos nossos projetos mais recentes
-        </p>
+    <section ref={root} id="projects" className="relative scroll-mt-20 border-t border-line bg-ink-900 py-24 sm:py-32">
+      <div className="container-x">
+        <SectionHeading index="03" eyebrow="Portfólio" title={<>Nossos <span className="text-brand-500">projetos</span></>}>
+          Obras e serviços executados em plataformas, indústrias e edificações. Filtre por especialidade e
+          clique para ampliar.
+        </SectionHeading>
 
-        <div className="projects__filters">
-          {filters.map((filter) => (
-            <button
-              key={filter.id}
-              className={`projects__filter-btn ${activeFilter === filter.id ? 'projects__filter-btn--active' : ''}`}
-              onClick={() => setActiveFilter(filter.id)}
-            >
-              {filter.label}
-            </button>
-          ))}
+        {/* Filtros */}
+        <div className="reveal no-scrollbar -mx-4 mt-12 flex gap-2 overflow-x-auto px-4 pb-2 sm:mx-0 sm:flex-wrap sm:px-0" role="toolbar" aria-label="Filtrar projetos">
+          {filters.map((filter) => {
+            const active = activeFilter === filter.id
+            return (
+              <button
+                key={filter.id}
+                onClick={() => changeFilter(filter.id)}
+                aria-pressed={active}
+                className={`flex shrink-0 items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium whitespace-nowrap transition-all duration-300 ${
+                  active
+                    ? 'border-brand-500 bg-brand-500 text-white'
+                    : 'border-line-strong text-zinc-400 hover:border-white/40 hover:text-white'
+                }`}
+              >
+                {filter.label}
+                <span className={`font-mono text-[0.7rem] ${active ? 'text-white/70' : 'text-zinc-600'}`}>{counts[filter.id]}</span>
+              </button>
+            )
+          })}
         </div>
 
-        <div className="projects__grid">
-          {filteredProjects.map((project, index) => (
-            <div
+        {/* Galeria */}
+        <div className="mt-10 grid grid-cols-2 gap-x-3 gap-y-8 sm:gap-x-5 sm:gap-y-10 lg:grid-cols-3 xl:grid-cols-4">
+          {filtered.map((project, index) => (
+            <button
               key={project.image}
-              className="project-card"
-              style={{ animationDelay: `${index * 0.1}s` }}
+              data-project
+              data-cursor="Ver"
+              onClick={(e) => open(index, e)}
+              className="group flex flex-col self-start text-left"
+              style={{ viewTransitionName: `project-${allProjects.indexOf(project)}` }}
             >
-              <div
-                className="project-card__image"
-                onClick={() => openModal(project)}
-                role="button"
-                tabIndex={0}
-                onKeyPress={(e) => e.key === 'Enter' && openModal(project)}
-              >
+              <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-ink-850 ring-1 ring-line transition duration-500 group-hover:ring-brand-500/60">
                 <img
                   src={project.image}
                   alt={project.title}
-                  className="project-card__photo"
+                  loading="lazy"
+                  className="h-full w-full object-cover transition duration-700 ease-(--ease-out-expo) group-hover:scale-105"
                 />
-                <div className="project-card__overlay">
-                  <div className="project-card__zoom-icon">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-                      <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2"/>
-                      <path d="M21 21L16.65 16.65" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                      <path d="M11 8V14M8 11H14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                    </svg>
-                  </div>
-                  <button className="project-card__btn">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                      <path d="M15 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M15 11L12 14M12 14L9 11M12 14V3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                    Ver Projeto
-                  </button>
-                </div>
+                <span className="absolute top-3 right-3 grid size-10 scale-75 place-items-center rounded-full bg-brand-500 text-white opacity-0 shadow-lg transition duration-500 group-hover:scale-100 group-hover:opacity-100">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </span>
               </div>
-              <div className="project-card__content">
-                <span className="project-card__category">{categoryDisplay(project)}</span>
-                <h3 className="project-card__title">{project.title}</h3>
-                <p className="project-card__description">{project.description}</p>
+              <div className="mt-3 sm:mt-4">
+                <span className="font-mono text-[0.6rem] tracking-[0.18em] text-brand-400 uppercase sm:text-[0.68rem]">
+                  {categoryLabel(project)}
+                </span>
+                <h3 className="font-display text-lg leading-tight font-bold text-white uppercase transition-colors group-hover:text-brand-400 sm:text-2xl">
+                  {project.title}
+                </h3>
+                <p className="mt-1 line-clamp-2 hidden text-sm text-zinc-400 sm:block">{project.description}</p>
               </div>
-            </div>
+            </button>
           ))}
         </div>
       </div>
 
-      {isModalOpen && selectedProject && createPortal(
-        <div
-          className="projects__modal"
-          onClick={closeModal}
-          role="dialog"
-          aria-modal="true"
-        >
-          <button
-            className="projects__modal-close"
-            onClick={closeModal}
-            aria-label="Fechar modal"
-          >
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-              <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
-
-          <button
-            className="projects__modal-nav projects__modal-nav--prev"
-            onClick={(e) => { e.stopPropagation(); prevProject(); }}
-            aria-label="Projeto anterior"
-          >
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-              <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
-
-          <div
-            className="projects__modal-content"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <img
-              src={selectedProject.image}
-              alt={selectedProject.title}
-              className="projects__modal-image"
-            />
-            <div className="projects__modal-info">
-              <span className="projects__modal-category">{categoryDisplay(selectedProject)}</span>
-              <h3 className="projects__modal-title">{selectedProject.title}</h3>
-              <p className="projects__modal-description">{selectedProject.description}</p>
-            </div>
-          </div>
-
-          <button
-            className="projects__modal-nav projects__modal-nav--next"
-            onClick={(e) => { e.stopPropagation(); nextProject(); }}
-            aria-label="Próximo projeto"
-          >
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-              <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
-        </div>,
-        document.body
-      )}
+      <Lightbox items={filtered} index={selected} onClose={() => setSelected(null)} onChange={setSelected} />
     </section>
   )
 }
