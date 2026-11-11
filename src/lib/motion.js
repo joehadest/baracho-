@@ -17,6 +17,21 @@ export const MQ = {
 
 export const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
+/**
+ * Lê (e guarda em cache no GSAP) o transform atual de todos os alvos de uma vez.
+ *
+ * Por quê: ao criar dezenas de tweens, o GSAP lê o estilo de cada elemento logo
+ * depois de escrever no anterior — cada leitura força o navegador a recalcular o
+ * layout da página inteira (layout thrashing). Lendo tudo antes, em sequência,
+ * o layout é calculado uma vez só. No primeiro acesso isso cortava ~0,6 s de CPU
+ * num celular intermediário.
+ */
+export const primeTransforms = (root, selector) => {
+  const scope = root ?? document
+  const els = typeof selector === 'string' ? scope.querySelectorAll(selector) : gsap.utils.toArray(selector)
+  for (const el of els) gsap.getProperty(el, 'x')
+}
+
 /* ---------- Smooth scroll (Lenis) ---------- */
 let lenis = null
 const locks = new Set()

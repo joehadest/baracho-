@@ -1,89 +1,92 @@
-import { useRef, useState } from 'react'
 import { finishIntro, gsap, lockScroll, reducedMotion, useGSAP } from '../../lib/motion'
 
+// Tempo mínimo (desde o início da navegação) com a marca na tela, mesmo em conexões rápidas
+const MIN_VISIBLE_MS = 1400
+
+const timeout = (ms) => new Promise((r) => setTimeout(r, ms))
+
+// Espera a foto do hero estar baixada e decodificada (com limite, para não travar)
+const heroReady = () => {
+  const img = document.querySelector('[data-hero-img]')
+  if (!img) return Promise.resolve()
+  const loaded = img.complete
+    ? Promise.resolve()
+    : new Promise((r) => {
+        img.addEventListener('load', r, { once: true })
+        img.addEventListener('error', r, { once: true })
+      })
+  const decoded = loaded.then(() => img.decode?.()).catch(() => {})
+  return Promise.race([decoded, timeout(3000)])
+}
+
+// Dois quadros: o navegador conclui o primeiro layout/pintura antes de animarmos
+const nextFrames = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)))
+
 /**
- * Abertura: contador 0 → 100, logo e duas cortinas que se abrem revelando o hero.
- * Com "reduzir movimento" o preloader é pulado.
+ * A abertura é HTML/CSS puro no index.html — aparece antes do JavaScript e anima
+ * na GPU enquanto o site é montado. Este componente só assume o final: completa o
+ * contador até 100%, abre as cortinas e libera o hero quando tudo está pronto.
  */
 const Preloader = () => {
-  const root = useRef(null)
-  const [done, setDone] = useState(() => typeof window !== 'undefined' && reducedMotion())
+  useGSAP(() => {
+    const el = document.getElementById('preloader')
+    if (!el || reducedMotion()) {
+      el?.remove()
+      lockScroll('intro', false)
+      finishIntro()
+      return
+    }
 
-  useGSAP(
-    () => {
-      if (done) {
-        finishIntro()
-        return
-      }
-      lockScroll('intro', true)
-      window.scrollTo(0, 0)
+    lockScroll('intro', true)
+    window.scrollTo(0, 0)
+    el.style.animation = 'none' // desliga a trava de segurança do CSS: o JS chegou
 
-      const counter = { v: 0 }
-      const num = root.current.querySelector('[data-num]')
+    let tl
+    let cancelled = false
+    const minTime = timeout(Math.max(0, MIN_VISIBLE_MS - performance.now()))
 
-      const tl = gsap.timeline({
+    Promise.all([heroReady(), minTime, nextFrames()]).then(() => {
+      if (cancelled) return
+      const q = gsap.utils.selector(el)
+      const num = el.querySelector('[data-num]')
+      const bar = el.querySelector('[data-bar]')
+
+      // Assume de onde as animações CSS pararam, para não haver salto
+      const pct = parseInt(getComputedStyle(num).getPropertyValue('--pl-pct'), 10) || 0
+      const scale = new DOMMatrixReadOnly(getComputedStyle(bar).transform).a || 0
+      q('[data-logo], [data-tag], [data-meta], [data-bar], [data-num]').forEach((n) => (n.style.animation = 'none'))
+      num.style.setProperty('--pl-pct', pct)
+      gsap.set(bar, { scaleX: scale, transformOrigin: 'left center' })
+
+      const counter = { v: pct }
+      tl = gsap.timeline({
         defaults: { ease: 'expo.inOut' },
         onComplete: () => {
+          el.remove()
           lockScroll('intro', false)
-          setDone(true)
         },
       })
+      tl.to(counter, {
+        v: 100,
+        duration: 0.45,
+        ease: 'power2.out',
+        onUpdate: () => num.style.setProperty('--pl-pct', Math.round(counter.v)),
+      })
+        .to(bar, { scaleX: 1, duration: 0.45, ease: 'power2.out' }, '<')
+        .to(q('[data-logo], [data-tag], [data-meta]'), { yPercent: -110, duration: 0.6, ease: 'expo.in', stagger: 0.03 }, '-=0.05')
+        .add(() => finishIntro(), '-=0.15')
+        .to(q('[data-panel="top"]'), { yPercent: -100, duration: 1.1 }, '<')
+        .to(q('[data-panel="bottom"]'), { yPercent: 100, duration: 1.1 }, '<')
+        .to(q('[data-redline], [data-bar]'), { opacity: 0, duration: 0.6 }, '<')
+    })
 
-      tl.from('[data-logo]', { yPercent: 110, duration: 0.9, ease: 'expo.out' })
-        .from('[data-tag]', { yPercent: 110, duration: 0.9, ease: 'expo.out' }, '<0.1')
-        .to(counter, {
-          v: 100,
-          duration: 1.5,
-          ease: 'power2.inOut',
-          onUpdate: () => (num.textContent = String(Math.round(counter.v)).padStart(3, '0')),
-        }, 0.1)
-        .to('[data-bar]', { scaleX: 1, duration: 1.5, ease: 'power2.inOut' }, 0.1)
-        .to('[data-logo], [data-tag], [data-meta]', { yPercent: -110, duration: 0.7, ease: 'expo.in', stagger: 0.04 })
-        .add(() => finishIntro(), '-=0.05')
-        .to('[data-panel="top"]', { yPercent: -100, duration: 1.1 }, '<')
-        .to('[data-panel="bottom"]', { yPercent: 100, duration: 1.1 }, '<')
-        .to('[data-redline], [data-bar]', { opacity: 0, duration: 0.6 }, '<')
-    },
-    { scope: root }
-  )
+    return () => {
+      cancelled = true
+      tl?.kill()
+    }
+  }, [])
 
-  if (done) return null
-
-  return (
-    <div ref={root} className="fixed inset-0 z-[200] text-white" aria-hidden="true">
-      <div data-panel="top" className="absolute inset-x-0 top-0 h-1/2 bg-ink-950" />
-      <div data-panel="bottom" className="absolute inset-x-0 bottom-0 h-1/2 bg-ink-950" />
-      <div data-redline className="absolute inset-x-0 top-1/2 h-px bg-brand-500" />
-
-      <div className="absolute inset-0 grid place-items-center">
-        <div className="flex flex-col items-center">
-          <div className="overflow-hidden">
-            <p data-logo className="font-display text-[clamp(3.5rem,12vw,9rem)] leading-[0.95] font-extrabold tracking-tight">
-              BARACHO<span className="text-brand-500">.</span>
-            </p>
-          </div>
-          <div className="overflow-hidden">
-            <p data-tag className="font-mono text-[0.65rem] tracking-[0.4em] text-zinc-400 uppercase sm:text-xs">
-              Soluções e Serviços
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div className="container-x absolute inset-x-0 bottom-8 flex items-end justify-between">
-        <div className="overflow-hidden">
-          <p data-meta className="font-mono text-xs tracking-[0.2em] text-zinc-500 uppercase">Desde 2013</p>
-        </div>
-        <div className="overflow-hidden">
-          <p data-meta className="font-display text-6xl leading-none font-bold tabular-nums sm:text-8xl">
-            <span data-num>000</span>
-            <span className="text-brand-500">%</span>
-          </p>
-        </div>
-      </div>
-      <div data-bar className="absolute inset-x-0 bottom-0 h-1 origin-left scale-x-0 bg-brand-500" />
-    </div>
-  )
+  return null
 }
 
 export default Preloader

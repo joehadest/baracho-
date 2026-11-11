@@ -1,6 +1,7 @@
 import { useEffect, useId, useLayoutEffect, useRef } from 'react'
 import { categoryLabel } from '../../data/projects'
 import { lockScroll } from '../../lib/motion'
+import { responsive, SIZES } from '../../lib/images'
 
 /**
  * Lightbox baseado no <dialog> nativo: foco preso, ESC e camada "top-layer"
@@ -49,7 +50,7 @@ const Lightbox = ({ items, index, onClose, onChange }) => {
             className="flex max-h-full w-full max-w-5xl flex-col items-center gap-5"
           >
             <img
-              src={item.image}
+              {...responsive(item.image, SIZES.lightbox)}
               alt={item.title}
               style={{ viewTransitionName: 'lightbox-img' }}
               className="max-h-[72dvh] w-auto max-w-full rounded-2xl object-contain shadow-2xl ring-1 ring-line-strong"

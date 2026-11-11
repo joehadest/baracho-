@@ -325,6 +325,9 @@
       border-box;
   animation: spin-angle 6s linear infinite;
 }
+.border-spin:not([data-inview]) {
+  animation-play-state: paused;
+}
 @keyframes spin-angle {
   to { --angle: 360deg; }
 }

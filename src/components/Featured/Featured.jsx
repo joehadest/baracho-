@@ -2,8 +2,9 @@ import { useCallback, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { barachoProjects } from '../../data/barachoProjects'
 import { categoryLabel } from '../../data/projects'
-import { gsap, MQ, useGSAP, viewTransition } from '../../lib/motion'
+import { gsap, MQ, primeTransforms, useGSAP, viewTransition } from '../../lib/motion'
 import SectionHeading from '../ui/SectionHeading'
+import { responsive, SIZES } from '../../lib/images'
 import Lightbox from '../ui/Lightbox'
 
 const items = barachoProjects
@@ -58,6 +59,8 @@ const Featured = () => {
   useGSAP(
     () => {
       paint(0)
+      primeTransforms(root.current, '[data-feat-card], [data-feat-img]')
+      primeTransforms(null, trackRef.current)
       const mm = gsap.matchMedia()
 
       mm.add(MQ.desktop, () => {
@@ -165,9 +168,10 @@ const Featured = () => {
             <div className="relative aspect-[2/3] overflow-hidden rounded-2xl bg-ink-850 ring-1 ring-line transition duration-500 group-hover:ring-brand-500/60 lg:h-[54svh]">
               <img
                 data-feat-img
-                src={project.image}
+                {...responsive(project.image, SIZES.featured)}
                 alt={project.title}
                 loading="lazy"
+                decoding="async"
                 className="h-full w-full scale-[1.22] object-cover transition-[scale] duration-700 ease-(--ease-out-expo) group-hover:scale-[1.3]"
               />
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink-950/50 via-transparent to-transparent opacity-0 transition duration-500 group-hover:opacity-100" />

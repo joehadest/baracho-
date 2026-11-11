@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { gsap, MQ, SplitText, useGSAP } from '../../lib/motion'
+import { gsap, MQ, SplitText, primeTransforms, useGSAP } from '../../lib/motion'
 import RopeAccessArt from './RopeAccessArt'
 
 const statement =
@@ -21,6 +21,7 @@ const Manifesto = () => {
       mm.add(MQ.motion, () => {
         // --- Palavras acendendo
         const split = SplitText.create('[data-manifesto]', { type: 'words', wordsClass: 'mf-word' })
+        primeTransforms(root.current, '[data-zoom-img], [data-climber], [data-annot], [data-zoom-word], [data-zoom-caption] > *')
         gsap.fromTo(
           split.words,
           { opacity: 0.12 },

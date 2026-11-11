@@ -1,6 +1,7 @@
 import { useRef } from 'react'
-import { gsap, MQ, onIntroDone, SplitText, useGSAP } from '../../lib/motion'
+import { gsap, MQ, onIntroDone, SplitText, primeTransforms, useGSAP } from '../../lib/motion'
 import Roll from '../ui/Roll'
+import { responsive, SIZES } from '../../lib/images'
 
 const features = [
   {
@@ -35,6 +36,7 @@ const Hero = () => {
 
       mm.add(MQ.motion, () => {
         const split = SplitText.create('[data-hero-line]', { type: 'chars', charsClass: 'hero-char' })
+        primeTransforms(root.current, '.hero-char, [data-hero-fade], [data-hero-media], [data-hero-img], [data-hero-feature], [data-hero-parallax], [data-hero-content], [data-hero-strip]')
 
         gsap.set(split.chars, { yPercent: 115, rotate: 6 })
         gsap.set('[data-hero-fade]', { autoAlpha: 0, y: 30 })
@@ -74,7 +76,7 @@ const Hero = () => {
         <div data-hero-media className="absolute inset-0 overflow-hidden">
           <img
             data-hero-img
-            src="/images/projects/alphinismo/alphinismo 1.jpg"
+            {...responsive('/images/projects/alphinismo/alphinismo 1.jpg', SIZES.hero)}
             alt=""
             fetchPriority="high"
             className="h-full w-full scale-105 object-cover object-[70%_center] opacity-70 grayscale-[35%]"
