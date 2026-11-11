@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { gsap, MQ, scrollToTarget, useGSAP } from '../../lib/motion'
+import { gsap, MQ, primeTransforms, scrollToTarget, useGSAP } from '../../lib/motion'
 import Roll from '../ui/Roll'
 
 const columns = [
@@ -55,6 +55,7 @@ const Footer = () => {
     () => {
       const mm = gsap.matchMedia()
       mm.add(MQ.motion, () => {
+        primeTransforms(root.current, '[data-letter]')
         const tl = gsap.timeline({
           defaults: { ease: 'none' },
           scrollTrigger: { trigger: '[data-wordmark]', start: 'top bottom', end: 'max', scrub: 1 },

@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { gsap, MQ, ScrollTrigger, useGSAP } from '../../lib/motion'
+import { gsap, MQ, ScrollTrigger, primeTransforms, useGSAP } from '../../lib/motion'
 
 const items = [
   'Isolamento Térmico',
@@ -40,6 +40,7 @@ const Marquee = () => {
     () => {
       const mm = gsap.matchMedia()
       mm.add(MQ.motion, () => {
+        primeTransforms(root.current, '[data-track], [data-band]')
         const tracks = gsap.utils.toArray('[data-track]')
         const loops = tracks.map((track, i) =>
           gsap.fromTo(
@@ -50,10 +51,14 @@ const Marquee = () => {
         )
 
         let direction = 1
+        // Fora da tela as faixas ficam pausadas (não gastam CPU à toa)
+        const play = (self) => loops.forEach((loop) => (self.isActive ? loop.resume() : loop.pause()))
         const st = ScrollTrigger.create({
           trigger: root.current,
           start: 'top bottom',
           end: 'bottom top',
+          onToggle: play,
+          onRefresh: play,
           onUpdate: (self) => {
             const v = self.getVelocity()
             if (self.direction !== direction) direction = self.direction

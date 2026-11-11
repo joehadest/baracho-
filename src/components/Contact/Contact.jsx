@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import SectionHeading from '../ui/SectionHeading'
 import Roll from '../ui/Roll'
 
@@ -69,6 +69,16 @@ const Field = ({ label, children }) => (
 
 const Contact = () => {
   const [form, setForm] = useState(emptyForm)
+  const formRef = useRef(null)
+
+  // A borda animada só gira quando o formulário está visível
+  useEffect(() => {
+    const el = formRef.current
+    if (!el) return
+    const io = new IntersectionObserver(([entry]) => el.toggleAttribute('data-inview', entry.isIntersecting))
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
 
@@ -128,6 +138,7 @@ const Contact = () => {
         <div className="reveal self-start">
         <form
           onSubmit={handleSubmit}
+          ref={formRef}
           className="border-spin relative flex flex-col gap-5 rounded-3xl p-6 shadow-2xl sm:p-10"
         >
           <div className="mb-2 flex items-center justify-between gap-4">

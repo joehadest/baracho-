@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { gsap, MQ, SplitText, useGSAP } from '../../lib/motion'
+import { gsap, MQ, SplitText, primeTransforms, useGSAP } from '../../lib/motion'
 
 /**
  * Título de seção com revelação linha a linha (SplitText com máscara),
@@ -14,6 +14,7 @@ const SectionHeading = ({ index, eyebrow, title, children, align = 'left', class
       const mm = gsap.matchMedia()
       mm.add(MQ.motion, () => {
         const trigger = { trigger: root.current, start: 'top 85%', once: true }
+        primeTransforms(root.current, '[data-sh-eyebrow], [data-sh-text]')
 
         gsap.from('[data-sh-eyebrow]', { autoAlpha: 0, x: -24, duration: 1, scrollTrigger: trigger })
         gsap.from('[data-sh-text]', { autoAlpha: 0, y: 24, duration: 1.2, delay: 0.35, scrollTrigger: trigger })
@@ -23,13 +24,15 @@ const SectionHeading = ({ index, eyebrow, title, children, align = 'left', class
           mask: 'lines',
           linesClass: 'split-line',
           autoSplit: true,
-          onSplit: (self) =>
-            gsap.from(self.lines, {
+          onSplit: (self) => {
+            primeTransforms(null, self.lines)
+            return gsap.from(self.lines, {
               yPercent: 110,
               duration: 1.3,
               stagger: 0.1,
               scrollTrigger: trigger,
-            }),
+            })
+          },
         })
         return () => split.revert()
       })

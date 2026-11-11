@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { gsap, MQ, useGSAP } from '../../lib/motion'
+import { gsap, MQ, primeTransforms, useGSAP } from '../../lib/motion'
 import SectionHeading from '../ui/SectionHeading'
 import Roll from '../ui/Roll'
 
@@ -81,6 +81,7 @@ const Services = () => {
     () => {
       const mm = gsap.matchMedia()
       mm.add(MQ.motion, () => {
+        primeTransforms(root.current, '[data-service] > :not([data-service-bar]), [data-service-icon]')
         gsap.from('[data-service] > :not([data-service-bar])', {
           y: 60,
           autoAlpha: 0,

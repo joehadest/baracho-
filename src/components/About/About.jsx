@@ -1,6 +1,7 @@
 import { useRef } from 'react'
-import { gsap, MQ, useGSAP } from '../../lib/motion'
+import { gsap, MQ, primeTransforms, useGSAP } from '../../lib/motion'
 import SectionHeading from '../ui/SectionHeading'
+import { responsive, SIZES } from '../../lib/images'
 
 const pillars = [
   {
@@ -34,6 +35,7 @@ const About = () => {
     () => {
       const mm = gsap.matchMedia()
       mm.add(MQ.motion, () => {
+        primeTransforms(root.current, '[data-about-img], [data-about-badge], [data-pillar-line], [data-pillar-in], [data-value]')
         // Foto revelada por uma "cortina" + parallax interno
         gsap.fromTo(
           '[data-about-photo]',
@@ -88,9 +90,10 @@ const About = () => {
             <div data-about-photo className="relative mt-12 overflow-hidden rounded-3xl ring-1 ring-line">
               <img
                 data-about-img
-                src="/images/projects/pintura industrial/pintura industrial 1.jpg"
+                {...responsive('/images/projects/pintura industrial/pintura industrial 1.jpg', SIZES.about)}
                 alt="Profissional da Baracho realizando pintura industrial por pulverização"
                 loading="lazy"
+                decoding="async"
                 className="aspect-[4/3] w-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-ink-950/80 via-transparent to-transparent" />

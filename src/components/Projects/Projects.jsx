@@ -1,8 +1,9 @@
 import { useMemo, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
-import { gsap, MQ, ScrollTrigger, useGSAP, viewTransition } from '../../lib/motion'
+import { gsap, MQ, ScrollTrigger, primeTransforms, useGSAP, viewTransition } from '../../lib/motion'
 import { allProjects, categoryLabel, projectFilters } from '../../data/projects'
 import SectionHeading from '../ui/SectionHeading'
+import { responsive, SIZES } from '../../lib/images'
 import Lightbox from '../ui/Lightbox'
 
 const Projects = () => {
@@ -28,6 +29,7 @@ const Projects = () => {
     () => {
       const mm = gsap.matchMedia()
       mm.add(MQ.motion, () => {
+        primeTransforms(root.current, '[data-project]')
         gsap.set('[data-project]', { autoAlpha: 0, y: 70 })
         const triggers = ScrollTrigger.batch('[data-project]', {
           start: 'top 92%',
@@ -104,9 +106,10 @@ const Projects = () => {
             >
               <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-ink-850 ring-1 ring-line transition duration-500 group-hover:ring-brand-500/60">
                 <img
-                  src={project.image}
+                  {...responsive(project.image, SIZES.grid)}
                   alt={project.title}
                   loading="lazy"
+                  decoding="async"
                   className="h-full w-full object-cover transition duration-700 ease-(--ease-out-expo) group-hover:scale-105"
                 />
                 <span className="absolute top-3 right-3 grid size-10 scale-75 place-items-center rounded-full bg-brand-500 text-white opacity-0 shadow-lg transition duration-500 group-hover:scale-100 group-hover:opacity-100">
